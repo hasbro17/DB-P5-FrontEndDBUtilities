@@ -73,7 +73,7 @@ const Status AttrCatalog::dropRelation(const string & relation)
 	}
 
 	//initiate a startScan for this relation
-	status=scan->startScan(0, MAXNAME, STRING, (char*)&relation, EQ);
+	status=scan->startScan(0, MAXNAME, STRING, relation.data(), EQ);
 	if(status!=OK)
 	{
 			printf("MyError: Cannot initiate startScan in dropRelation\n");
@@ -102,6 +102,7 @@ const Status AttrCatalog::dropRelation(const string & relation)
 			}
 	}
 
+	scan->endScan();
 	delete scan;
 	return OK;
 }

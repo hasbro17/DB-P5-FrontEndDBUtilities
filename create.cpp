@@ -15,7 +15,7 @@ const Status RelCatalog::createRel(const string & relation,
   if (relation.length() >= sizeof rd.relName)
     return NAMETOOLONG;
 
-	//check if realtion does not already exist inside of RelCatalog
+	//check if relation does not already exist inside of RelCatalog
 	status=relCat->getInfo(relation, rd);
 	if(status==OK)//should be no record found
 		return RELEXISTS;
@@ -25,9 +25,20 @@ const Status RelCatalog::createRel(const string & relation,
 		 return status;
 	 }
 
+	 //check for duplicate attribute names
+	 for(int i=0; i<attrCnt-1; i++)
+	 {
+		 for(int j=i+1; j<attrCnt; j++)
+		 {
+			 if(strcmp(attrList[i].attrName, attrList[j].attrName)==0)
+				return DUPLATTR;
+		 }
+	 }
+
 	//Add this new relation as a tuple to the relcatalog relation
 	//as a RelDesc tuple
 	strcpy(rd.relName, relation.c_str());//set the relName
+	//memcpy(rd.relName, relation.data(), relation.length());
 	rd.attrCnt=attrCnt;
 	//add this to the relcatalog
 	status=relCat->addInfo(rd);

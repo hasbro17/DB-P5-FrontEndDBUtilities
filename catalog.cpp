@@ -26,7 +26,7 @@ const Status RelCatalog::getInfo(const string & relation, RelDesc &record)
 	}
 
 	//initiate a startScan for this relation
-	status=scan->startScan(0, MAXNAME, STRING, (char*)&relation, EQ);
+	status=scan->startScan(0, MAXNAME, STRING, relation.data(), EQ);
 	if(status!=OK)
 	{
 			printf("MyError: Cannot initiate startScan in getInfo\n");
@@ -53,7 +53,8 @@ const Status RelCatalog::getInfo(const string & relation, RelDesc &record)
 
 	//memcopy the dbrecord data into the return param Reldesc record
 	memcpy(&record, rec.data, rec.length);
-	
+
+	scan->endScan();	
 	delete scan;
 	return OK;
 
@@ -76,7 +77,7 @@ const Status RelCatalog::addInfo(RelDesc & record)
 
 	//create a record to insert in ifs
 	rec.data=&record;
-	rec.length=sizeof(RelDesc);//FIXME:Check if this is correct.
+	rec.length=sizeof(RelDesc);//sizeof(RelDesc);//FIXME:Check if this is correct.
 
 	//insert the record
 	status=ifs->insertRecord(rec, rid);
@@ -108,7 +109,7 @@ const Status RelCatalog::removeInfo(const string & relation)
 	}
 
 	//initiate a startScan for this relation
-	status=scan->startScan(0, MAXNAME, STRING, (char*)&relation, EQ);
+	status=scan->startScan(0, MAXNAME, STRING, relation.data(), EQ);
 	if(status!=OK)
 	{
 			printf("MyError: Cannot initiate startScan in removeInfo\n");
@@ -132,7 +133,8 @@ const Status RelCatalog::removeInfo(const string & relation)
 			printf("MyError: Something wrong while deleteRecord() in removeInfo\n");
 			return status;
 	}
-	
+
+	scan->endScan();	
 	delete scan;
 	return OK;
 }
@@ -173,7 +175,7 @@ const Status AttrCatalog::getInfo(const string & relation,
 	}
 
 	//initiate a startScan for this relation
-	status=scan->startScan(0, MAXNAME, STRING, (char*)&relation, EQ);
+	status=scan->startScan(0, MAXNAME, STRING, relation.data(), EQ);
 	if(status!=OK)
 	{
 			printf("MyError: Cannot initiate startScan in AttrCat::getInfo()\n");
@@ -205,6 +207,7 @@ const Status AttrCatalog::getInfo(const string & relation,
 					//check if the record attrName matches the given attrName
 					if(strcmp(record.attrName, attrName.c_str())==0)
 					{
+							scan->endScan();
 							delete scan;
 							return OK;
 					}
@@ -212,6 +215,8 @@ const Status AttrCatalog::getInfo(const string & relation,
 	}
 
 	//End of file so attr not found
+	scan->endScan();
+	delete scan;
 	return ATTRNOTFOUND;
 
 }
@@ -270,7 +275,7 @@ const Status AttrCatalog::removeInfo(const string & relation,
 	}
 
 	//initiate a startScan for this relation
-	status=scan->startScan(0, MAXNAME, STRING, (char*)&relation, EQ);
+	status=scan->startScan(0, MAXNAME, STRING, relation.data(), EQ);
 	if(status!=OK)
 	{
 			printf("MyError: Cannot initiate startScan in AttrCat::removeInfo()\n");
@@ -339,7 +344,7 @@ const Status AttrCatalog::getRelInfo(const string & relation,
 	}
 
 	//initiate a startScan for this relation
-	status=scan->startScan(0, MAXNAME, STRING, (char*)&relation, EQ);
+	status=scan->startScan(0, MAXNAME, STRING, relation.data(), EQ);
 	if(status!=OK)
 	{
 			printf("MyError: Cannot initiate startScan in AttrCat::getRelInfo()\n");
@@ -374,7 +379,7 @@ const Status AttrCatalog::getRelInfo(const string & relation,
 					attrCnt++;
 			}
 	}
-
+	scan->endScan();
 	delete scan;
 
 	if(attrCnt>0)

@@ -42,12 +42,12 @@ const Status UT_Load(const string & relation, const string & fileName)
 	if(status!=OK)
 			return status;
 
-/*
+
 	for(int i=0; i<attrCnt; i++)
 	{
 			width=width+attrs[i].attrLen;
 	}
-*/
+
 
   // start insertFileScan on relation
 	iFile = new InsertFileScan(relation,status);
