@@ -2,7 +2,7 @@
 #define CATALOG_H
 
 #include "heapfile.h"
-
+#include <stdio.h>//TODO: remove me later on
 
 // define if debug output wanted
 //#define DEBUGCAT

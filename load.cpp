@@ -34,16 +34,25 @@ const Status UT_Load(const string & relation, const string & fileName)
 
   // get relation data
 
+	status=relCat->getInfo(relation, rd);
+	if(status!=OK)
+			return status;
 
+	status=attrCat->getRelInfo(relation, attrCnt, attrs);
+	if(status!=OK)
+			return status;
 
+/*
+	for(int i=0; i<attrCnt; i++)
+	{
+			width=width+attrs[i].attrLen;
+	}
+*/
 
   // start insertFileScan on relation
-
-
-
-
-
-
+	iFile = new InsertFileScan(relation,status);
+	if(status!=OK)
+		return status;
 
 
   // allocate buffer to hold record read from unix file
@@ -52,7 +61,7 @@ const Status UT_Load(const string & relation, const string & fileName)
 
   int records = 0;
   int nbytes;
-  Record rec;
+  Record rec;			
 
   // read next input record from Unix file and insert it into relation
   while((nbytes = read(fd, record, width)) == width) {
