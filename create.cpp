@@ -25,13 +25,15 @@ const Status RelCatalog::createRel(const string & relation,
 		 return status;
 	 }
 
-	 //check for duplicate attribute names
+	 //check for duplicate attribute names and valid attrLength
 	 for(int i=0; i<attrCnt-1; i++)
 	 {
 		 for(int j=i+1; j<attrCnt; j++)
 		 {
 			 if(strcmp(attrList[i].attrName, attrList[j].attrName)==0)
 				return DUPLATTR;
+			if(attrList[i].attrLen >=254)
+				return ATTRTOOLONG;
 		 }
 	 }
 
